@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "73396050663",
+    "project_id": "michael-dennis-contact-app",
+    "storage_bucket": "michael-dennis-contact-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:73396050663:android:5ec39628564e5433152042",
+        "android_client_info": {
+          "package_name": "com.decagon.android.sq007"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "73396050663-e3sbo78vsut5jkmr8q0tkebt6cgid8on.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmlaLQP6bXeLxz4dvok9DKBedMbwefWXk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "73396050663-e3sbo78vsut5jkmr8q0tkebt6cgid8on.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

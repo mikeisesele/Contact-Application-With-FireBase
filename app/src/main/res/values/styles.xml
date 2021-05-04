@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="dark_color">@color/base_dark_color</color>
+    <color name="light_color">@color/light_dark_color</color>
+
+    <style name="input_styles">
+        <item name="boxCornerRadiusTopStart">20dp</item>
+        <item name="android:layout_marginBottom">15dp</item>
+        <item name="boxCornerRadiusTopEnd">15dp</item>
+    </style>
+</resources>
