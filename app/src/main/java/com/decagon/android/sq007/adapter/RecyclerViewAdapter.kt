@@ -6,18 +6,22 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.decagon.android.sq007.R
+import com.decagon.android.sq007.Utils.ClickListener
+import com.decagon.android.sq007.databinding.ActivityMainBinding
 import com.decagon.android.sq007.model.Contact
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * recycler view adapter takes an argument (a data source)
  * recycler view adapter extends RecyclerView.Adapter class
  */
 
-class RecyclerViewAdapter(private val recyclerList: ArrayList<Contact> ) : RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewViewHolder>() {
+class RecyclerViewAdapter(private val clickListener: ClickListener, private val recyclerList: ArrayList<Contact>) : RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewViewHolder>() {
 
+//
     // inner class recycler view view holder takes the view type to be shown, and places it in the view holder
     inner class RecyclerViewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-//  inner class RecyclerViewViewHolder(val binding: RecyclerViewContactBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewViewHolder {
 
@@ -28,13 +32,17 @@ class RecyclerViewAdapter(private val recyclerList: ArrayList<Contact> ) : Recyc
         return RecyclerViewViewHolder(recyclerLayout)
     }
 
-    // binds data to be displayed to each view holder created
     override fun onBindViewHolder(holder: RecyclerViewViewHolder, position: Int) {
 
         holder.itemView.apply {
             findViewById<TextView>(R.id.tv_first_name).text = recyclerList[position].firstName
             findViewById<TextView>(R.id.tv_surname_name).text = recyclerList[position].lastName
-            findViewById<TextView>(R.id.tv_name_initial).text = recyclerList[position].firstName?.take(1)
+            findViewById<TextView>(R.id.tv_name_initial).text =
+                recyclerList[position].firstName?.take(1)?.toUpperCase(Locale.ROOT)
+        }
+
+        holder.itemView.setOnClickListener{
+            clickListener.onItemClicked(position)
         }
     }
 

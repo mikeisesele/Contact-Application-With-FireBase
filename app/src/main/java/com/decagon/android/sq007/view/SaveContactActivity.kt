@@ -3,7 +3,6 @@ package com.decagon.android.sq007.view
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -12,6 +11,8 @@ import com.decagon.android.sq007.model.Contact
 import com.decagon.android.sq007.controller.ContactViewModel
 import com.decagon.android.sq007.Utils.Validator
 import com.decagon.android.sq007.controller.DataChangeSuccessListener
+import com.decagon.android.sq007.model.NODE_CONTACT
+import com.google.firebase.database.FirebaseDatabase
 import kotlin.properties.Delegates
 
 class SaveContactActivity : AppCompatActivity(), DataChangeSuccessListener {
@@ -25,12 +26,18 @@ class SaveContactActivity : AppCompatActivity(), DataChangeSuccessListener {
     private lateinit var contactNumberText: String
     private lateinit var contactSurnameText: String
 
+    // initialize the database
+    private val database = FirebaseDatabase.getInstance().getReference(NODE_CONTACT)
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // set up binding
         val binding: ActivitySaveContactBinding = ActivitySaveContactBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
 
         viewModel = ViewModelProvider(this).get(ContactViewModel::class.java)
 
@@ -39,13 +46,11 @@ class SaveContactActivity : AppCompatActivity(), DataChangeSuccessListener {
 //        // check if message received was empty. return if null
 //        if(receiver == null){
 //            return
-//
 //        } else {
 //            // if not null, get the message received
 //            contactNameText = receiver.getString("Name").toString()
 //            contactNumberText = receiver.getString("Number").toString()
 //            contactSurnameText = receiver.getString("Surname").toString()
-//
 //        }
 
         binding.btnSave.setOnClickListener {
@@ -71,12 +76,13 @@ class SaveContactActivity : AppCompatActivity(), DataChangeSuccessListener {
             contact.firstName = contactNameText
             contact.lastName = contactSurnameText
             contact.phoneNumber = contactNumberText
+            contact.id = database.push().key.toString()
+
 
             // pass the contact to contact view model for database upload
             viewModel.addContact(contact, this)
 
-            handler.postDelayed({startActivity(Intent(this, MainActivity::class.java))}, 500)
-
+            handler.postDelayed({startActivity(Intent(this, MainActivity::class.java))}, 1500)
 
         } else {
             when {
@@ -89,7 +95,6 @@ class SaveContactActivity : AppCompatActivity(), DataChangeSuccessListener {
     }
 
     override fun onDataChangeSuccess(updatedContactList: ArrayList<Contact>) {
-
         Toast.makeText(this@SaveContactActivity, "Updated", Toast.LENGTH_SHORT).show()
     }
 }

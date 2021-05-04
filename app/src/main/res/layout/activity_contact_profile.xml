@@ -77,24 +77,13 @@
 
         <ImageView
             android:id="@+id/call_button"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:layout_weight="1"
             android:contentDescription="@string/call_button"
             app:srcCompat="@drawable/ic_baseline_call_24"
             tools:layout_editor_absoluteX="281dp"
-            tools:layout_editor_absoluteY="21dp" />
-
-        <ImageView
-            android:id="@+id/message_button"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:contentDescription="@string/message_button"
-            app:srcCompat="@drawable/ic_baseline_sms_24"
-            tools:layout_editor_absoluteX="350dp"
             tools:layout_editor_absoluteY="21dp" />
 
     </LinearLayout>

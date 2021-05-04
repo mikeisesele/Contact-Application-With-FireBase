@@ -1,16 +1,22 @@
 package com.decagon.android.sq007.controller
 
+import android.content.Intent
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.decagon.android.sq007.adapter.RecyclerViewAdapter
-import com.decagon.android.sq007.controller.ContactViewModel.Companion.updatedContactList
 import com.decagon.android.sq007.model.Contact
 import com.decagon.android.sq007.model.NODE_CONTACT
-import com.decagon.android.sq007.view.MainActivity
 import com.google.firebase.database.*
 
 class ContactViewModel : ViewModel() {
+
+    val contactList: MutableLiveData<ArrayList<Contact>> by lazy {
+        MutableLiveData<ArrayList<Contact>>()
+    }
+
+
+
 
     private lateinit var firebaseSuccessListener: DataChangeSuccessListener
 
@@ -18,16 +24,11 @@ class ContactViewModel : ViewModel() {
         var updatedContactList: ArrayList<Contact> = ArrayList()
     }
 
-    val updatedDatabase = FirebaseDatabase.getInstance().getReference("contact")
-
     // initialize the database
     private val database = FirebaseDatabase.getInstance().getReference(NODE_CONTACT)
 
     // function to add contact. function call from save contact
     fun addContact(contact: Contact, firebaseSuccessListener: DataChangeSuccessListener) {
-
-        // get firebase generated id
-        contact.id = database.push().key
 
         // use id to set data to firebase
         database.child(contact.id!!).setValue(contact)
@@ -36,14 +37,15 @@ class ContactViewModel : ViewModel() {
         getUpdatedData()
     }
 
-//    fun deleteContact(contact: Contact) {
-//
-//    }
+    fun deleteContact(id: String) {
+        Log.d("Viewmodel", "deleteContact: $id")
+        database.child(id).removeValue()
+    }
 
 
     fun getUpdatedData() {
 
-        updatedDatabase.addValueEventListener(object : ValueEventListener {
+        database.addValueEventListener(object : ValueEventListener {
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
@@ -56,10 +58,14 @@ class ContactViewModel : ViewModel() {
                         val f = contact["firstName"]
                         val l = contact["lastName"]
                         val p = contact["phoneNumber"]
+                        var i = contact["id"]
 
-                        updatedContactList.add(Contact(firstName = f, lastName = l, phoneNumber = p))
+                        updatedContactList.add(Contact(id = i, firstName = f, lastName = l, phoneNumber = p))
+                        updatedContactList.sortWith(compareBy<Contact>{it.firstName})
 
                     }
+
+
                 }
             }
 
@@ -67,6 +73,7 @@ class ContactViewModel : ViewModel() {
             }
         })
     }
+
 }
 
 interface DataChangeSuccessListener {

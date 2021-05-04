@@ -2,50 +2,71 @@ package com.decagon.android.sq007.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.decagon.android.sq007.R
+import com.decagon.android.sq007.Utils.ClickListener
 import com.decagon.android.sq007.adapter.RecyclerViewAdapter
 import com.decagon.android.sq007.databinding.ActivityMainBinding
 import com.decagon.android.sq007.controller.ContactViewModel
-import com.decagon.android.sq007.controller.DataChangeSuccessListener
 import com.decagon.android.sq007.model.Contact
 
-class MainActivity : AppCompatActivity(){
+class MainActivity() : AppCompatActivity(), ClickListener {
+
+    var handler = Handler()
+    private lateinit var viewModel: ContactViewModel
+    private lateinit var recyclerList: ArrayList<Contact>
+    private lateinit var recyclerViewAdapter : RecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var binding: ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
+        val binding: ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        viewModel = ViewModelProvider(this).get(ContactViewModel::class.java)
+
+        viewModel.getUpdatedData()
+
+        viewModel.contactList.observe(this,{
+            val myRecyclerLayout: RecyclerView = binding.recyclerView
+            recyclerViewAdapter = RecyclerViewAdapter(this, it)
+            myRecyclerLayout.adapter = recyclerViewAdapter
+            recyclerList = it
+        })
 
         binding.floatingAddContactButton.setOnClickListener{
             startActivity(Intent(this, SaveContactActivity::class.java))
         }
 
-        binding.recyclerView.setOnClickListener{
-            startActivity(Intent(this, ContactProfileActivity::class.java))
-        }
+//        binding.loadPhoneContactButton.setOnClickListener{
+//            startActivity(Intent(this, LoadPhoneContactActivity::class.java))
+//        }
 
-        // get data for recyclerView and save to recycler list
-//        val recyclerList = ContactViewModel.updatedContactList
+//        binding.recyclerView.setOnClickListener{
+//            startActivity(Intent(this, ContactProfileActivity::class.java))
+//        }
 
-        val recyclerList = ContactViewModel.updatedContactList
+            // get data for recyclerView and save to recycler list
+          //  recyclerList = ContactViewModel.updatedContactList
+
+            // get recycle list adapter and pass in data to be binded, save in a variable
 
 
-        // get recycle list adapter and pass in data to be binded, save in a variable
-        val recyclerViewListAdapter = RecyclerViewAdapter(recyclerList)
+            // get the recycler view layout from xml
 
-        // get the recycler view layout from xml
-        val myRecyclerLayout: RecyclerView = binding.recyclerView
 
-        // set the recycler view adapter to the recyclerview layout
-        myRecyclerLayout.adapter = recyclerViewListAdapter
+            // set the recycler view adapter to the recyclerview layout
 
     }
+    override fun onItemClicked(position: Int) {
+        var intent = Intent(this, ContactProfileActivity::class.java)
+        intent.putExtra("personName", recyclerList[position].firstName)
+        intent.putExtra("personId", recyclerList[position].id)
+        intent.putExtra("personNumber", recyclerList[position].phoneNumber)
+        Log.i("Id", "$recyclerList[].id")
+        startActivity(intent)
+     }
 }
-
