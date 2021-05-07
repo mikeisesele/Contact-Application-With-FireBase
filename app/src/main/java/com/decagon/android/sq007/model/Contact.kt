@@ -9,5 +9,5 @@ data class Contact(
     var lastName: String?,
     var phoneNumber: String?,
 ) {
-    constructor(): this("", "", "", "")
+    constructor() : this("", "", "", "")
 }

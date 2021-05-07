@@ -2,33 +2,35 @@ package com.decagon.android.sq007.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.decagon.android.sq007.Utils.Validator
+import com.decagon.android.sq007.controller.ContactViewModel
+import com.decagon.android.sq007.controller.DataChangeSuccessListener
 import com.decagon.android.sq007.databinding.ActivitySaveContactBinding
 import com.decagon.android.sq007.model.Contact
-import com.decagon.android.sq007.controller.ContactViewModel
-import com.decagon.android.sq007.Utils.Validator
-import com.decagon.android.sq007.controller.DataChangeSuccessListener
 import com.decagon.android.sq007.model.NODE_CONTACT
 import com.google.firebase.database.FirebaseDatabase
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 
 class SaveContactActivity : AppCompatActivity(), DataChangeSuccessListener {
 
-    var handler = Handler()
+    /**
+     * initialize variables
+     * @param viewmodel ->  Variable to hold view model. the application's access route to the database
+     */
     private lateinit var viewModel: ContactViewModel
-    private var validatedName by Delegates.notNull<Boolean>()
-    private var validatedNumber by Delegates.notNull<Boolean>()
-
     private lateinit var contactNameText: String
     private lateinit var contactNumberText: String
     private lateinit var contactSurnameText: String
+    private var validatedName by Delegates.notNull<Boolean>()
+    private var validatedNumber by Delegates.notNull<Boolean>()
 
     // initialize the database
     private val database = FirebaseDatabase.getInstance().getReference(NODE_CONTACT)
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,28 +39,17 @@ class SaveContactActivity : AppCompatActivity(), DataChangeSuccessListener {
         val binding: ActivitySaveContactBinding = ActivitySaveContactBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
+        // initialise view model
         viewModel = ViewModelProvider(this).get(ContactViewModel::class.java)
 
-
-//        var receiver: Bundle? = intent.extras
-//        // check if message received was empty. return if null
-//        if(receiver == null){
-//            return
-//        } else {
-//            // if not null, get the message received
-//            contactNameText = receiver.getString("Name").toString()
-//            contactNumberText = receiver.getString("Number").toString()
-//            contactSurnameText = receiver.getString("Surname").toString()
-//        }
-
+        // collect data from input fields
         binding.btnSave.setOnClickListener {
             // convert the inputs to strings
             contactNameText = binding.tvEditTextFirstName.text.toString().trim()
             contactNumberText = binding.tvEditTextPhoneNumber.text.toString().trim()
             contactSurnameText = binding.tvEditTextSurnameName.text.toString().trim()
 
+            // validate input data
             validateInput()
         }
     }
@@ -68,6 +59,7 @@ class SaveContactActivity : AppCompatActivity(), DataChangeSuccessListener {
         validatedName = Validator.validateName(contactNameText)
         validatedNumber = Validator.validatePhoneNumber(contactNumberText)
 
+        // check if entries meets expectations
         if (validatedName && validatedNumber) {
             // create new contact
             val contact = Contact()
@@ -78,26 +70,25 @@ class SaveContactActivity : AppCompatActivity(), DataChangeSuccessListener {
             contact.phoneNumber = contactNumberText
             contact.id = database.push().key.toString()
 
-
             // pass the contact to contact view model for database upload
             viewModel.addContact(contact, this)
+            finish()
 
-            handler.postDelayed({startActivity(Intent(this, MainActivity::class.java))}, 1500)
-
+            // lunch main activity after save complete
+            startActivity(Intent(this, MainActivity::class.java))
         } else {
+            // show  notifications if data not entered correctly
             when {
                 !validatedName -> Toast.makeText(this, "First Name is required", Toast.LENGTH_SHORT)
-                    .show();
+                    .show()
                 !validatedNumber -> Toast.makeText(this, "Number is required", Toast.LENGTH_SHORT)
-                    .show();
+                    .show()
             }
         }
     }
 
+    // notify when save is successful
     override fun onDataChangeSuccess(updatedContactList: ArrayList<Contact>) {
         Toast.makeText(this@SaveContactActivity, "Updated", Toast.LENGTH_SHORT).show()
     }
 }
-
-
-

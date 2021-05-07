@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.decagon.android.sq007.R
 import com.decagon.android.sq007.Utils.ClickListener
-import com.decagon.android.sq007.databinding.ActivityMainBinding
 import com.decagon.android.sq007.model.Contact
 import java.util.*
 import kotlin.collections.ArrayList
@@ -34,6 +33,7 @@ class RecyclerViewAdapter(private val clickListener: ClickListener, private val 
 
     override fun onBindViewHolder(holder: RecyclerViewViewHolder, position: Int) {
 
+        // bind details to each views
         holder.itemView.apply {
             findViewById<TextView>(R.id.tv_first_name).text = recyclerList[position].firstName
             findViewById<TextView>(R.id.tv_surname_name).text = recyclerList[position].lastName
@@ -41,7 +41,8 @@ class RecyclerViewAdapter(private val clickListener: ClickListener, private val 
                 recyclerList[position].firstName?.take(1)?.toUpperCase(Locale.ROOT)
         }
 
-        holder.itemView.setOnClickListener{
+        // set on click listener to each view
+        holder.itemView.setOnClickListener {
             clickListener.onItemClicked(position)
         }
     }

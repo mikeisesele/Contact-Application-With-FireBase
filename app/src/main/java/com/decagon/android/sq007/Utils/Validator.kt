@@ -11,5 +11,4 @@ object Validator {
     fun validateName(name: String): Boolean {
         return name.isNotEmpty()
     }
-
 }
